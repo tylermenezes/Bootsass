@@ -1,0 +1,87 @@
+
+
+@function set-nth($list, $n, $value)
+{
+    $new_list: ();
+
+    @for $i from 1 through length($list) {
+        @if ($i == $n) {
+            $new_list: append($new_list, $value);
+        } @else {
+            $new_list: append($new_list, nth($list, $i));
+        }
+    }
+
+    @return $new_list;
+}
+
+@function sort($list)
+{
+    $sorted_list: $list;
+    $changed: true;
+    @while $changed {
+        $changed: false;
+
+        @for $i from 1 through (length($sorted_list) - 1) {
+            @if (nth($sorted_list, $i) > nth($sorted_list, $i + 1)) {
+                $x: nth($sorted_list, $i);
+                $y: nth($sorted_list, $i + 1);
+
+                $sorted_list: set-nth($sorted_list, $i, $y);
+                $sorted_list: set-nth($sorted_list, $i + 1, $x);
+
+                $changed: true;
+            }
+        }
+    }
+
+    @return $sorted_list;
+}
+
+@function unique($list)
+{
+    $filtered_list: ();
+
+    @for $i from 1 through length($list) {
+        $current_value: nth($list, $i);
+
+        @if (index($filtered_list, $current_value) == false) {
+            $filtered_list: append($filtered_list, $current_value);
+        }
+    }
+
+    @return $filtered_list;
+}
+
+@function reverse($list)
+{
+    $new_list: ();
+
+    @for $i from 1 through length($list) {
+        $new_list: append($new_list, nth($list, length($list) - ($i - 1)));
+    }
+
+    @return $new_list;
+}
+
+@function slice($list, $start, $length)
+{
+    $new_list: ();
+
+    $reverse: false;
+    @if ($length < 0) {
+        $start: $start + ($length + 1);
+        $length: $length * -1;
+        $reverse: true;
+    }
+
+    @for $i from $start through ($start + $length - 1) {
+        $new_list: append($new_list, nth($list, $i));
+    }
+
+    @if ($reverse) {
+        $new_list: reverse($new_list);
+    }
+
+    @return $new_list;
+}

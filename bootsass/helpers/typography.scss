@@ -1,0 +1,36 @@
+@function generate_modular_scale ($base_size, $base_size_alt, $ratio, $count)
+{
+    $list: ();
+    $sign: 1;
+
+    @if ($count == 0) {
+        @return ($base_size);
+    } @else if ($count < 0) {
+        $count: -1 * $count;
+        $sign: -1;
+    }
+
+    $count: $count + 1;
+
+    @for $i from 0 through $count {
+        $list: append($list, $base_size * pow($ratio, $i));
+        $list: append($list, $base_size_alt * pow($ratio, $i));
+
+        $list: append($list, $base_size * pow($ratio, -1 * $i));
+        $list: append($list, $base_size_alt * pow($ratio, -1 * $i));
+    }
+
+    $list: unique(sort($list));
+
+    $index: index($list, $base_size);
+    $list: slice($list, $index, $sign * $count);
+
+    @return $list;
+}
+
+@function modular_scale ($step)
+{
+    $scale: generate_modular_scale($font_base_size, $font_base_size_alt, $font_ratio, $step);
+    $n: abs($step) + 1;
+    @return nth($scale, $n);
+}
