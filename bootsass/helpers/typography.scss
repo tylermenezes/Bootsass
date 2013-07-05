@@ -1,4 +1,4 @@
-@function generate_modular_scale ($base_size, $base_size_alt, $ratio, $count)
+@function generate_modular_scale($base_size, $base_size_alt, $ratio, $count)
 {
     $list: ();
     $sign: 1;
@@ -28,9 +28,42 @@
     @return $list;
 }
 
-@function modular_scale ($step)
+$modular_scale_cache_positive: ();
+$modular_scale_cache_negative: ();
+@function modular_scale_get_cache($i)
 {
-    $scale: generate_modular_scale($font_base_size, $font_base_size_alt, $font_ratio, $step);
-    $n: abs($step) + 1;
-    @return nth($scale, $n);
+    $cache: null;
+    @if ($i < 0) {
+        $cache: $modular_scale_cache_negative;
+    } @else {
+        $cache: $modular_scale_cache_positive;
+    }
+
+    @if (length($cache) < $i) {
+        @return null;
+    } @else {
+        @return nth($cache, $i);
+    }
+}
+
+@function modular_scale_set_cache($i, $obj)
+{
+    @if ($i < 0) {
+        $modular_scale_cache_negative: set-nth($modular_scale_cache_negative, $i, $obj);
+    } @else {
+        $modular_scale_cache_positive: set-nth($modular_scale_cache_positive, $i, $obj);
+    }
+
+    @return null;
+}
+
+@function modular_scale($step)
+{
+    @if (modular_scale_get_cache($step) == null) {
+        $scale: generate_modular_scale($font_base_size, $font_base_size_alt, $font_ratio, $step);
+        $value: nth($scale, abs($step) + 1);
+        $discard: modular_scale_set_cache($step, $value);
+    }
+
+    @return modular_scale_get_cache($step);
 }

@@ -4,11 +4,15 @@
 {
     $new_list: ();
 
-    @for $i from 1 through length($list) {
+    @for $i from 1 through max($n, length($list)) {
         @if ($i == $n) {
             $new_list: append($new_list, $value);
         } @else {
-            $new_list: append($new_list, nth($list, $i));
+            @if (length($list) >= $i) {
+                $new_list: append($new_list, nth($list, $i));
+            } @else {
+                $new_list: append($new_list, null);
+            }
         }
     }
 

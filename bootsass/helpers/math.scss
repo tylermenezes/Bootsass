@@ -32,3 +32,27 @@
         @return $x;
     }
 }
+
+@function max($numbers...)
+{
+    $max: null;
+    @each $number in $numbers {
+        @if ($max == null or $number > $max) {
+            $max: $number;
+        }
+    }
+
+    @return $max;
+}
+
+@function min($numbers...)
+{
+    $min: null;
+    @each $number in $numbers {
+        @if ($min == null or $number < $min) {
+            $min: $number;
+        }
+    }
+
+    @return $min;
+}
